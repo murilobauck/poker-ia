@@ -1,0 +1,4 @@
+numpy>=1.26.0
+pillow>=10.1.0
+pyinstaller>=6.3.0
+pokerlib>=1.2.0 
