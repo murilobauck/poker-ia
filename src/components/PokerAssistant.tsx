@@ -59,8 +59,8 @@ interface HandAnalysis {
 const PokerAssistant: React.FC = () => {
   const [playerCards, setPlayerCards] = useState<string[]>(['', '']);
   const [communityCards, setCommunityCards] = useState<string[]>(['', '', '', '', '']);
-  const [potSize, setPotSize] = useState<number | ''>('');
-  const [betToCall, setBetToCall] = useState<number | ''>('');
+  const [potSize, setPotSize] = useState<string>('100');
+  const [betToCall, setBetToCall] = useState<string>('20');
   const [opponents, setOpponents] = useState<number>(1);
   const [position, setPosition] = useState<'early' | 'middle' | 'late'>('middle');
   const [results, setResults] = useState<Results | null>(null);
@@ -585,6 +585,14 @@ const PokerAssistant: React.FC = () => {
       return null;
     }
     
+    const numericPotSize = Number(potSize);
+    const numericBetToCall = Number(betToCall);
+    
+    if (isNaN(numericPotSize) || isNaN(numericBetToCall)) {
+      alert('Por favor, insira valores numéricos válidos.');
+      return null;
+    }
+
     if (!playerCards[0] || !playerCards[1]) {
       alert('Por favor, selecione suas cartas antes de analisar.');
       return null;
@@ -635,9 +643,9 @@ const PokerAssistant: React.FC = () => {
       100
     );
 
-    const potOdds = (betToCall / (potSize + betToCall)) * 100;
-    const impliedOdds = calculateImpliedOdds(potSize, betToCall, adjustedWinProbability, position);
-    const directEV = ((adjustedWinProbability / 100) * potSize) - (((100 - adjustedWinProbability) / 100) * betToCall);
+    const potOdds = (numericBetToCall / (numericPotSize + numericBetToCall)) * 100;
+    const impliedOdds = calculateImpliedOdds(numericPotSize, numericBetToCall, adjustedWinProbability, position);
+    const directEV = ((adjustedWinProbability / 100) * numericPotSize) - (((100 - adjustedWinProbability) / 100) * numericBetToCall);
     
     // Ajusta fold equity baseado na força da mão e posição
     const baseFoldEquity = position === 'late' ? 20 : position === 'middle' ? 15 : 10;
@@ -757,28 +765,24 @@ const PokerAssistant: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Tamanho do Pote</label>
                   <input
-                    type="number"
                     value={potSize}
                     onChange={(e) => {
-                      const value = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
+                      const value = e.target.value.replace(/\D/g, '');
                       setPotSize(value);
                     }}
                     placeholder="Ex: 100"
-                    min="0"
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded focus:border-green-400 text-white"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Aposta para Pagar</label>
                   <input
-                    type="number"
                     value={betToCall}
                     onChange={(e) => {
-                      const value = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
+                      const value = e.target.value.replace(/\D/g, '');
                       setBetToCall(value);
                     }}
                     placeholder="Ex: 20"
-                    min="0"
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded focus:border-green-400 text-white"
                   />
                 </div>
