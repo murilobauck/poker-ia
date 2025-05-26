@@ -293,7 +293,7 @@ const PokerAssistant: React.FC = () => {
     });
 
     // Analisa possibilidades de flush
-    const flushDraw = Object.values(suits).some(cards => cards.length === 4);
+    let flushDraw = false;
     const backDoorFlush = Object.values(suits).some(cards => cards.length === 3);
     
     // Analisa possibilidades de sequência
@@ -530,37 +530,25 @@ const PokerAssistant: React.FC = () => {
   };
 
   const calculateAdvancedOuts = (playerCards: string[], communityCards: string[]) => {
-    const playerParsed = playerCards.map(parseCard).filter(Boolean) as Card[];
-    const communityParsed = communityCards.map(parseCard).filter(Boolean) as Card[];
-    const allCards = [...playerParsed, ...communityParsed];
-    
-    if (allCards.length < 2) return { outs: 0, draws: [] };
-
     let outs = 0;
     const draws: Draw[] = [];
-    
     const suitCounts: { [key: string]: number } = {};
-    allCards.forEach(card => {
-      suitCounts[card.suit] = (suitCounts[card.suit] || 0) + 1;
+
+    // Count suits
+    [...playerCards, ...communityCards].forEach(card => {
+      if (card) {
+        const suit = card.slice(-1);
+        suitCounts[suit] = (suitCounts[suit] || 0) + 1;
+      }
     });
-    
+
+    // Check for flush draws
     Object.entries(suitCounts).forEach(([suit, count]) => {
       if (count === 4) {
         outs += 9;
         draws.push({ type: 'Flush Draw', outs: 9, probability: 19.1 });
       }
     });
-
-    const values = allCards.map(c => c.value).sort((a, b) => a - b);
-    const straightOuts = calculateStraightOuts(values);
-    if (straightOuts > 0) {
-      outs += straightOuts;
-      draws.push({ 
-        type: straightOuts === 8 ? 'Open-Ended Straight' : 'Gutshot Straight', 
-        outs: straightOuts, 
-        probability: straightOuts === 8 ? 17.0 : 8.5 
-      });
-    }
 
     return { outs: Math.min(outs, 20), draws };
   };
