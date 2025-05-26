@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calculator, TrendingUp, AlertCircle, CheckCircle, Target, DollarSign, BarChart3, X } from 'lucide-react';
+import './styles.css';
 
 interface Card {
   rank: string;
@@ -162,8 +163,7 @@ const PokerAssistant: React.FC = () => {
         <div>
           <label className="block text-sm font-medium mb-2">Tamanho do Pote</label>
           <input
-            inputMode="numeric"
-            pattern="[0-9]*"
+            type="number"
             value={potSize}
             onChange={(e) => {
               const value = e.target.value === '' ? 0 : Math.max(0, Number(e.target.value));
@@ -176,8 +176,7 @@ const PokerAssistant: React.FC = () => {
         <div>
           <label className="block text-sm font-medium mb-2">Aposta para Pagar</label>
           <input
-            inputMode="numeric"
-            pattern="[0-9]*"
+            type="number"
             value={betToCall}
             onChange={(e) => {
               const value = e.target.value === '' ? 0 : Math.max(0, Number(e.target.value));
