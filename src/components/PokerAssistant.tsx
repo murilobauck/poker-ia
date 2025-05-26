@@ -59,8 +59,8 @@ interface HandAnalysis {
 const PokerAssistant: React.FC = () => {
   const [playerCards, setPlayerCards] = useState<string[]>(['', '']);
   const [communityCards, setCommunityCards] = useState<string[]>(['', '', '', '', '']);
-  const [potSize, setPotSize] = useState<number>(100);
-  const [betToCall, setBetToCall] = useState<number>(20);
+  const [potSize, setPotSize] = useState<number | ''>('');
+  const [betToCall, setBetToCall] = useState<number | ''>('');
   const [opponents, setOpponents] = useState<number>(1);
   const [position, setPosition] = useState<'early' | 'middle' | 'late'>('middle');
   const [results, setResults] = useState<Results | null>(null);
@@ -592,6 +592,16 @@ const PokerAssistant: React.FC = () => {
   };
 
   const calculateAdvancedMetrics = () => {
+    if (potSize === '' || betToCall === '') {
+      alert('Por favor, preencha o tamanho do pote e a aposta para pagar com valores válidos.');
+      return null;
+    }
+    
+    if (!playerCards[0] || !playerCards[1]) {
+      alert('Por favor, selecione suas cartas antes de analisar.');
+      return null;
+    }
+
     const validPlayerCards = playerCards.filter(card => card);
     const validCommunityCards = communityCards.filter(card => card);
     
@@ -675,8 +685,13 @@ const PokerAssistant: React.FC = () => {
   };
 
   const analyzeHand = () => {
-    if (playerCards.filter(card => card).length < 2) {
-      alert('Please select your hole cards first');
+    if (potSize === '' || betToCall === '') {
+      alert('Por favor, preencha o tamanho do pote e a aposta para pagar com valores válidos.');
+      return;
+    }
+    
+    if (!playerCards[0] || !playerCards[1]) {
+      alert('Por favor, selecione suas cartas antes de analisar.');
       return;
     }
 
@@ -756,7 +771,12 @@ const PokerAssistant: React.FC = () => {
                   <input
                     type="number"
                     value={potSize}
-                    onChange={(e) => setPotSize(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
+                      setPotSize(value);
+                    }}
+                    placeholder="Ex: 100"
+                    min="0"
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded focus:border-green-400 text-white"
                   />
                 </div>
@@ -765,7 +785,12 @@ const PokerAssistant: React.FC = () => {
                   <input
                     type="number"
                     value={betToCall}
-                    onChange={(e) => setBetToCall(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
+                      setBetToCall(value);
+                    }}
+                    placeholder="Ex: 20"
+                    min="0"
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded focus:border-green-400 text-white"
                   />
                 </div>
