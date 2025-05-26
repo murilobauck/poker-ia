@@ -163,11 +163,10 @@ const PokerAssistant: React.FC = () => {
         <div>
           <label className="block text-sm font-medium mb-2">Tamanho do Pote</label>
           <input
-            type="number"
             value={potSize}
             onChange={(e) => {
-              const value = e.target.value === '' ? 0 : Math.max(0, Number(e.target.value));
-              setPotSize(value);
+              const value = e.target.value.replace(/\D/g, '');
+              setPotSize(value === '' ? 0 : Math.max(0, Number(value)));
             }}
             placeholder="Ex: 100"
             className="w-full p-2 bg-gray-700 border border-gray-600 rounded focus:border-green-400 text-white"
@@ -176,11 +175,10 @@ const PokerAssistant: React.FC = () => {
         <div>
           <label className="block text-sm font-medium mb-2">Aposta para Pagar</label>
           <input
-            type="number"
             value={betToCall}
             onChange={(e) => {
-              const value = e.target.value === '' ? 0 : Math.max(0, Number(e.target.value));
-              setBetToCall(value);
+              const value = e.target.value.replace(/\D/g, '');
+              setBetToCall(value === '' ? 0 : Math.max(0, Number(value)));
             }}
             placeholder="Ex: 20"
             className="w-full p-2 bg-gray-700 border border-gray-600 rounded focus:border-green-400 text-white"
